@@ -2,44 +2,45 @@ import React, { useEffect, useState } from 'react';
 import { TextField, Button, Typography, Paper } from '@mui/material'
 import FileBase from 'react-file-base64';
 import { useDispatch, useSelector } from 'react-redux';
-
+import { useNavigate } from 'react-router-dom';
 import useStyles from './styles';
 import { createPost, updatePost } from '../../actions/posts';
-import { create } from '@mui/material/styles/createTransitions';
 
 const Form = ({ currentId, setCurrentId }) => {
     const classes = useStyles();
+    const dispatch = useDispatch();
+    const history = useNavigate();
     const [postData, setPostData] = useState({
         title: '',
         message: '',
-        tags: '',
+        tags: [],
         selectedFile: ''
     });
-    const dispatch = useDispatch();
+    const post = useSelector((state) => (currentId ? state.posts.posts.find((message) => message._id === currentId) : null));
     const user = JSON.parse(localStorage.getItem('profile'));
 
+    const clear = () => {
+        setCurrentId(0);
+        setPostData({ title: '', message: '', tags: [], selectedFile: '' });
+    };
+
     // this will check which post we want to upate (and will return a singular post)
-    const post = useSelector((state) => currentId ? state.posts.find((p) => p._id === currentId) : null);
     useEffect(() => {
-        if(post) setPostData(post);
-    }, [post])
+        if (!post?.title) clear();
+        if (post) setPostData(post);
+      }, [post]);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-
         if (currentId === 0){
-            dispatch(createPost({ ...postData, name: user?.result?.name }));
+            dispatch(createPost({ ...postData }, history));
             clear();
         }else{
-            dispatch(updatePost(currentId, { ...postData, name: user?.result?.name }));
+            dispatch(updatePost(currentId, { ...postData }, history));
             clear();
         }
     };
 
-    const clear = () => {
-        setCurrentId(0);
-        setPostData({ title: '', message: '', tags: '', selectedFile: '' });
-    };
 
     if(!user?.result?.firstname){
         return(
@@ -51,7 +52,7 @@ const Form = ({ currentId, setCurrentId }) => {
 
     return (
         // paper is a div with a whiteish background
-        <Paper classes={classes.paper}>
+        <Paper classes={classes.paper} elevation={3}>
             <form autoComplete="off" noValidate className={classes.form} onSubmit={handleSubmit}>
                 <Typography variant="h5">NEW POST</Typography>    
                 <TextField name="title" variant="outlined" margin="dense" label="Title" fullWidth value ={postData.title} onChange={(e) => setPostData( { ...postData, title: e.target.value })}/>

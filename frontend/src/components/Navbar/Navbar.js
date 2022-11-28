@@ -4,18 +4,18 @@ import { useDispatch } from 'react-redux';
 import { AppBar, Avatar, Button, Toolbar, Typography } from '@mui/material';
 import decode from 'jwt-decode';
 import useStyles from './styles';
-
+import * as actionType from '../../constants/actions';
 
 const Navbar = () => {
     const classes = useStyles();
     const dispatch = useDispatch();
     const history = useNavigate();
     const location = useLocation();
-    const [user, setUser] = useState( JSON.parse(localStorage.getItem('profile')));
+    const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')));
 
     const logout = () => {
-        dispatch( {type: 'LOGOUT'})
-        history('/')
+        dispatch( {type: actionType.LOGOUT});
+        history('/auth');
         // i.e. logouts the user, as the user is null
         setUser(null);
     };
@@ -36,7 +36,7 @@ const Navbar = () => {
     return(
         <AppBar className={classes.appBar} position="static" color="inherit" >
             <div className={classes.brandContainer}>
-                <Typography component={Link} className={classes.heading} variant="h3" align="center">Type</Typography>
+                <Typography component={Link} className={classes.heading} variant="h3" align="center" to="/posts">Type</Typography>
                 <Toolbar className={classes.toolbar}>
                     {/* if the user exist, show something  */}
                     {/* else if the user does not exist, show something different*/}  
