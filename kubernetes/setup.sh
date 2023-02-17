@@ -1,5 +1,5 @@
 #!/bin/bash
-aws eks --region eu-west-2 update-kubeconfig --name cluster
+aws eks --region $AWS_REGION update-kubeconfig --name cluster
 
 kubectl create -f env.yaml
 kubectl apply -f backend.yaml
