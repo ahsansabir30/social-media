@@ -1,7 +1,7 @@
 # social-media
 ## Setup
 
-### Docker
+### Docker (Docker Compose)
 1.  Create a database in MongoDB
 2.  Create a .env file in the project directory 
 3.  Copy connection string from MongoDB and paste into the .env file as follows
